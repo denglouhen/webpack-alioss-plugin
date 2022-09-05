@@ -26,7 +26,7 @@ yarn add  @denglouhen/webpack-alioss-plugin -D
 
 * 实例传参
 ```javascript
-const WebpackAliOSSPlugin = require('@gdyfe/webpack-alioss-plugin')
+const WebpackAliOSSPlugin = require('@denglouhen/webpack-alioss-plugin')
 
 new WebpackAliOSSPlugin({
   accessKeyId: '2****************9',
@@ -39,7 +39,7 @@ new WebpackAliOSSPlugin({
 * 配置文件
 ```javascript
 
-const WebpackAliOSSPlugin = require('@gdyfe/webpack-alioss-plugin')
+const WebpackAliOSSPlugin = require('@denglouhen/webpack-alioss-plugin')
 const format = WebpackAliOSSPlugin.getFormat('YYYYMMDD') // 默认为getFormat('YYMMDD')
 new WebpackAliOSSPlugin({
   format
