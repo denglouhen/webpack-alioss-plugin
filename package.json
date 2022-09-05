@@ -1,12 +1,12 @@
 {
   "name": "webpack-yun-oss",
   "version": "0.2.0",
-  "description": "A webpack plugin to upload assets to aliyun oss",
   "main": "index.js", 
-  "repository": "git@github.com:MIchaelJier/webpack-yun-oss.git",
-  "homepage": "https://github.com/MIchaelJier/webpack-yun-oss.git",
-  "author": "MichaelJier <chem908430737@icloud.com>",
-  "license": "MIT",
+  "repository": "git@github.com:denglouhen/webpack-alioss-plugin.git",
+  "homepage": "https://github.com/denglouhen/webpack-alioss-plugin",
+  "description": "A webpack plugin to upload frontend build dist files to aliyun oss",
+  "author": "denglouhen <597073407@qq.com>",
+  "license": "MIT", 
   "private": true,
   "scripts": {
     "release": "lerna version",
@@ -21,7 +21,7 @@
     "serve:demo": "cd ./packages/plugin-demo && vue-cli-service serve",
     "build:demo": "cd ./packages/plugin-demo && vue-cli-service build",
     "build:nuxt": "cd ./packages/nuxt-demo && nuxt build",
-    "plugin:publish": "cd ./packages/webpack-alioss-plugin && npm publish --access public",
+    "plugin:publish": "cd ./packages/webpack-alioss-plugin && npm publish --access public --registry=https://registry.npmjs.org/",
     "plugin:build": "cd ./packages/webpack-alioss-plugin && rollup -c",
     "plugin:tsc": "cd ./packages/webpack-alioss-plugin && tsc"
   },

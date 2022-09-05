@@ -14,6 +14,9 @@ declare class AliOSS {
     delCacheAssets(): Promise<void>;
     asyncForEach(arr: Array<unknown>, cb: Function): Promise<void>;
     delAllAssets(): Promise<void>;
+    handleDel(name: string): Promise<void>;
+    deletePrefix(prefix: string): Promise<void>;
+    delPrefixAssetsByLimit(): Promise<void>;
     uploadAssets(): Promise<void>;
     filterFile(name: string): boolean;
     getFileName(name: string): string;

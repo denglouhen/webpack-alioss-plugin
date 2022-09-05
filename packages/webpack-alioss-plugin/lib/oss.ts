@@ -81,7 +81,10 @@ class AliOSS {
       ['accessKeyId', 'accessKeySecret', 'bucket', 'region'].some(
         (key: string): boolean =>
           // eslint-disable-next-line prettier/prettier
-        (hasJson ? isValidKey(key, jsonOptions) && !jsonOptions[key] : isValidKey(key, options as ParamOptions) && !(options as ParamOptions)[key])
+          hasJson
+            ? isValidKey(key, jsonOptions) && !jsonOptions[key]
+            : isValidKey(key, options as ParamOptions) &&
+              !(options as ParamOptions)[key]
       )
     ) {
       throw new Error(
@@ -91,7 +94,7 @@ class AliOSS {
     this.config = Object.assign(
       {
         prefix: '',
-        exclude: [/.*\.html$/],
+        exclude: [],
         deleteAll: false,
         local: true,
         output: '',
@@ -109,7 +112,7 @@ class AliOSS {
 
   async upload(): Promise<void> {
     if (this.config.format) {
-      await this.delCacheAssets().catch((err) => {
+      await this.delPrefixAssetsByLimit().catch((err) => {
         log(`\n${colors.red.inverse(' ERROR ')} ${colors.red(err)}\n`)
       })
     } else if (this.config.deleteAll) {
@@ -148,18 +151,20 @@ class AliOSS {
   }
 
   async delCacheAssets(): Promise<void> {
-    const prefix: string = this.config.prefix
+    const prefix: string = this.config.format
     const list: Array<number> = []
     try {
       const dirList: OSS.ListObjectResult = await this.client.list({
-        prefix: `${prefix}/`,
         delimiter: '/',
       })
+      log(colors.red(`dirList:${JSON.stringify(dirList)}`))
+      log(colors.red(`dirList PREFIXES:${dirList.prefixes}`))
       if (dirList.prefixes) {
         dirList.prefixes.forEach((subDir: string) => {
           list.push(+subDir.slice(prefix.length + 1, -1))
         })
       }
+      log(colors.red(`lIST: ${JSON.stringify(list)}`))
 
       if (list.length > 1) {
         const limit: number = this.config.limit > 3 ? this.config.limit - 1 : 2
@@ -207,6 +212,48 @@ class AliOSS {
     }
   }
 
+  async handleDel(name: string): Promise<void> {
+    try {
+      await this.client.delete(name)
+    } catch (error: any) {
+      error.failObjectName = name
+      return error
+    }
+  }
+
+  async deletePrefix(prefix: string): Promise<void> {
+    log(colors.yellow(`删除线上目录: ${prefix}/`))
+    const list = await this.client.list({
+      prefix: prefix,
+    })
+
+    list.objects = list.objects || []
+    await Promise.all(list.objects.map((v: any) => this.handleDel(v.name)))
+  }
+
+  async delPrefixAssetsByLimit(): Promise<void> {
+    try {
+      const dirList: OSS.ListObjectResult = await this.client.list({
+        delimiter: '/',
+      })
+      let rList: Array<number> = []
+      dirList.prefixes.forEach((item) => {
+        const i = item.slice(0, -1)
+        if (i !== this.config.format && /^\+?[1-9][0-9]*$/.test(i)) {
+          rList.push(Number(i))
+        }
+      })
+      rList = rList.sort((a, b) => b - a)
+      if (rList.length > this.config.limit) {
+        rList = rList.slice(this.config.limit, rList.length + 1)
+        await Promise.all(rList.map((v: any) => this.deletePrefix(v)))
+      }
+      await this.uploadAssets()
+    } catch (error) {
+      await this.uploadAssets()
+    }
+  }
+
   async uploadAssets(): Promise<void> {
     if (this.config.local) {
       await this.uploadLocale(this.config.output)
@@ -236,11 +283,11 @@ class AliOSS {
   }
 
   getFileName(name: string): string {
-    const { config } = this
-    const prefix: string = config.format
-      ? path.join(config.prefix, config.format.toString())
-      : config.prefix
-    return path.join(prefix, name).replace(/\\/g, '/')
+    // const { config } = this
+    // const prefix: string = config.format
+    //   ? path.join(config.prefix, config.format.toString())
+    //   : config.prefix
+    return path.join(name).replace(/\\/g, '/')
   }
 
   async update(name: string, content: string | Buffer): Promise<void> {
@@ -260,6 +307,10 @@ class AliOSS {
 
   async uploadLocale(dir: string): Promise<void> {
     await this.uploadLocaleBase(dir, this.update.bind(this))
+    // await this.uploadLocaleBase(
+    //   `dist/guapi/${this.config.format}/index.html`,
+    //   this.update.bind(this)
+    // )
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

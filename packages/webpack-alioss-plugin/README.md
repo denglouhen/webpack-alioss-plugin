@@ -1,10 +1,11 @@
 # webpack-alioss-plugin
-A webpack plugin to upload assets to aliyun oss
+用于前端项目打包部署到阿里云oss时，自动上传dist下的文件目录，将static文件夹放在一个时间戳文件夹下，每次部署时，根据limit保留就近的文件夹防止宕机，然后上传新的目录。
+为了解决正式环境下js、css等文件名带有hash值时，不会覆盖文件从而导致bucket下文件累积得越来越多的问题。
 
 ## 安装 
 ```
-npm i @gdyfe/webpack-alioss-plugin --save
-yarn add @gdyfe/webpack-alioss-plugin -D
+npm i @denglouhen/webpack-alioss-plugin --save
+yarn add  @denglouhen/webpack-alioss-plugin -D
 ```
 ## 参数
 | 选项名          | 类型                 | 是否必填 | 默认值 | 描述                                                                                                                                 |
