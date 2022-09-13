@@ -57,8 +57,6 @@ class AliOSS {
     let jsonOptions: ParamOptions = {}
     if (fileConfig !== null) {
       jsonOptions = fileConfig.config
-    } else {
-      log(colors.red(`JSON配置有误!`))
     }
     if (!options && !hasJson) {
       throw new Error(
@@ -157,14 +155,11 @@ class AliOSS {
       const dirList: OSS.ListObjectResult = await this.client.list({
         delimiter: '/',
       })
-      log(colors.red(`dirList:${JSON.stringify(dirList)}`))
-      log(colors.red(`dirList PREFIXES:${dirList.prefixes}`))
       if (dirList.prefixes) {
         dirList.prefixes.forEach((subDir: string) => {
           list.push(+subDir.slice(prefix.length + 1, -1))
         })
       }
-      log(colors.red(`lIST: ${JSON.stringify(list)}`))
 
       if (list.length > 1) {
         const limit: number = this.config.limit > 3 ? this.config.limit - 1 : 2
