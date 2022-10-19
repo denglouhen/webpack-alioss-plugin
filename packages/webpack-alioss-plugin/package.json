@@ -1,6 +1,6 @@
 {
   "name": "@denglouhen/webpack-alioss-plugin",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A webpack plugin to upload frontend build dist files to aliyun oss",
   "repository": "git@github.com:denglouhen/webpack-alioss-plugin.git",
   "author": "denglouhen <597073407@qq.com>",

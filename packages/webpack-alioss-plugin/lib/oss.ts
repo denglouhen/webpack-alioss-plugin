@@ -154,6 +154,7 @@ class AliOSS {
     try {
       const dirList: OSS.ListObjectResult = await this.client.list({
         delimiter: '/',
+        'max-keys': 1000,
       })
       if (dirList.prefixes) {
         dirList.prefixes.forEach((subDir: string) => {
@@ -220,6 +221,7 @@ class AliOSS {
     log(colors.yellow(`删除线上目录: ${prefix}/`))
     const list = await this.client.list({
       prefix: prefix,
+      'max-keys': 1000,
     })
 
     list.objects = list.objects || []
@@ -230,6 +232,7 @@ class AliOSS {
     try {
       const dirList: OSS.ListObjectResult = await this.client.list({
         delimiter: '/',
+        'max-keys': 1000,
       })
       let rList: Array<number> = []
       dirList.prefixes.forEach((item) => {
